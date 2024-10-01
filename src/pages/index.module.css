@@ -1,0 +1,29 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #e4d2d2;
+}
+
+.buttonContainer {
+  display: flex;
+  flex-direction: column; /* 縦に並べる */
+  width: 50%;
+  padding: 20px;
+}
+
+.button {
+  padding: 10px;
+  margin: 10px 0;
+  border: none;
+  background-color: #0070f3;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.button:hover {
+  background-color: #005bb5;
+}

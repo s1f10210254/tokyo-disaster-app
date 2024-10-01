@@ -1,0 +1,30 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model EvacuationSite {
+  id                       Int      @id @default(autoincrement())
+  localGovernmentCode      String   // 地方公共団体コード 
+  facilityName             String   // 避難場所_施設名称 (文字列)
+  address                  String   // 所在地住所 (文字列)
+  latitude                 Float    // 緯度 (半角数字)
+  longitude                Float    // 経度 (半角数字)
+  flood                    Boolean?  // 避難対象_洪水 (1か0)
+  landslide                Boolean?  // 避難対象_崖崩れ、土石流及び地滑り (1か0)
+  stormSurge               Boolean?  // 避難対象_高潮 (1か0)
+  earthquake               Boolean?  // 避難対象_地震 (1か0)
+  tsunami                  Boolean?  // 避難対象_津波 (1か0)
+  largeFire                Boolean?  // 避難対象_大規模な火事 (1か0)
+  inlandFlooding           Boolean?  // 避難対象_内水氾濫 (1か0)
+  volcanicPhenomenon       Boolean?  // 避難対象_火山現象 (1か0)
+  elevatorOrGroundFloor    Boolean?  // エレベーター有/避難スペースが１階 (1か0)
+  slope                    Boolean?  // スロープ等 (1か0)
+  tactilePaving            Boolean?  // 点字ブロック (1か0)
+  accessibleToilet         Boolean?  // 車椅子使用者対応トイレ (1か0)
+  other                    String?   // その他 (文字列)
+}
