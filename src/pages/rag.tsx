@@ -1,24 +1,62 @@
+import { useState } from "react";
+
 export default function Rag() {
-  const savePdf = async () => {
-    try {
-      const test = await fetch("/api/hello");
-      console.log(test.json());
-      const response = await fetch("/api/loadPdf");
-      if (!response.ok) {
-        throw new Error("Error loading PDF");
-      }
-    } catch (error) {
-      console.error(error);
-    }
+  const [url, setUrl] = useState("");
+  const [text, setText] = useState("");
+  const [result, setResult] = useState(null);
+
+  const handleUrlSubmit = async () => {
+    console.log("url: ", url);
+    const response = await fetch("/api/rag/embed", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url }), // URLを送信
+    });
+
+    const data = await response.json();
+    setResult(data.result);
+  };
+
+  // テキスト検索
+  const handleTextSearch = async () => {
+    console.log("text: ", text);
+    const response = await fetch("/api/rag/search", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text }),
+    });
+
+    const data = await response.json();
+    setResult(data.result);
   };
 
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <h1 className="text-4xl">Rag</h1>
-      <button onClick={savePdf}>pdf</button>
-      <a href="/pdfs/kitakuHazard.pdf" target="_blank">
-        pdfファイルを開く
-      </a>
+    <div>
+      <h3>URL Embedding</h3>
+      <input
+        type="text"
+        value={url}
+        onChange={(e) => setUrl(e.target.value)}
+        placeholder="Enter URL"
+      />
+      <button onClick={handleUrlSubmit}>Embed URL</button>
+
+      <h3>Text Search</h3>
+      <textarea
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder="Enter text to search"
+        rows={4}
+        cols={50}
+      />
+      <button onClick={handleTextSearch}>Search with Text</button>
+
+      {result && (
+        <div>
+          <h4>Result:</h4>
+          <pre>{JSON.stringify(result, null, 2)}</pre>
+        </div>
+      )}
     </div>
   );
 }

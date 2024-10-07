@@ -14,6 +14,9 @@ export default function Home() {
         <Link href="/map" passHref>
           <button className={styles.button}>マップ</button>
         </Link>
+        <Link href="/question" passHref>
+          <button className={styles.button}>質問</button>
+        </Link>
       </div>
     </div>
   );
