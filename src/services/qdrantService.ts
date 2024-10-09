@@ -42,16 +42,3 @@ export const saveChunksToQdrant = async (
     });
   }
 };
-
-// Qdrantに保存されたベクトルを類似検索する関数
-export const searchSimilarText = async (query: string) => {
-  const embedding = await getEmbedding(query);
-
-  // Qdrantに対して類似ベクトルを検索
-  const searchResult = await client.search("web_pages", {
-    vector: embedding,
-    limit: 5, // 類似データ上位5件を取得
-  });
-  console.log("searchResult", searchResult);
-  return searchResult;
-};

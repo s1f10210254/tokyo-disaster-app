@@ -34,6 +34,12 @@ export default function Question() {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Enter your question"
+        style={{
+          width: "80%",
+          padding: "10px",
+          //   fontSize: "1.5em",
+          marginBottom: "20px",
+        }}
       />
       <button onClick={handleSubmit} disabled={loading}>
         {loading ? "Loading..." : "Submit"}
@@ -45,7 +51,7 @@ export default function Question() {
         </div>
       )}
 
-      {references.length > 0 && (
+      {/* {references.length > 0 && (
         <div>
           <h2>References</h2>
           <ul>
@@ -54,13 +60,12 @@ export default function Question() {
                 <strong>URL:</strong> <a href={ref.url}>{ref.url}</a> <br />
                 <strong>Score:</strong> {ref.score} <br />
                 <strong>Text:</strong> <p>{ref.text}</p>{" "}
-                {/* 参照されたテキストを表示 */}
               </li>
             ))}
           </ul>
         </div>
-      )}
-      <button onClick={handleWeb}>Embed URL</button>
+      )} */}
+      {/* <button onClick={handleWeb}>Embed URL</button> */}
     </div>
   );
 }
