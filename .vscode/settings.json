@@ -8,10 +8,12 @@
     "hnswlib",
     "kitaku",
     "langchain",
+    "mapbox",
     "openai",
     "pdfs",
     "precip",
     "Qdrant",
+    "styleimagemissing",
     "tailwindcss",
     "vectorstores",
     "ＷＥＳＴ"

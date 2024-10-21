@@ -17,6 +17,9 @@ export default function Home() {
         <Link href="/question" passHref>
           <button className={styles.button}>質問</button>
         </Link>
+        <Link href="/completed" passHref>
+          <button className={styles.button}>完成</button>
+        </Link>
       </div>
     </div>
   );
