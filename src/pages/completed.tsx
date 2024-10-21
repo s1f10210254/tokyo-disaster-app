@@ -63,30 +63,41 @@ export default function Completed() {
           />
         </div>
         <div>
-          <input
-            type="text"
-            value={userQuestion}
-            onChange={(e) => setUserQuestion(e.target.value)}
-            placeholder="質問を入力してください"
-          />
-          <button onClick={getEvacuationSite}>避難所を探す</button>
-          {/* {disasterEvacuationSites.length > 0 && (
-            <div>
-              <h2>避難所リスト</h2>
-              <ul>
-                {disasterEvacuationSites.map((site, index) => (
-                  <li key={index}>
-                    <strong>{site.facilityName}</strong>
-                    <p>住所: {site.address}</p>
-                    <p>
-                      緯度: {site.latitude}, 経度: {site.longitude}
-                    </p>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )} */}
-          {/*避難所リスト上位1件表示 */}
+          <form
+            onSubmit={(e) => {
+              e.preventDefault(); // デフォルトのフォーム送信動作を防ぐ
+              getEvacuationSite(); // POST リクエストを送信
+            }}
+          >
+            <button
+              type="submit"
+              style={{
+                padding: "10px",
+                backgroundColor: "#0070f3",
+                color: "white",
+                cursor: "pointer",
+                borderRadius: "5px",
+                marginBottom: "20px",
+                fontWeight: "bold",
+              }}
+            >
+              災害に相性が良い避難所を取得する
+            </button>
+            <textarea
+              value={userQuestion}
+              onChange={(e) => setUserQuestion(e.target.value)}
+              placeholder="質問する"
+              style={{
+                width: "100%",
+                height: "100px",
+                marginBottom: "20px",
+                border: "1px solid #ccc",
+                borderRadius: "5px",
+                padding: "10px",
+                fontSize: "16px",
+              }}
+            />
+          </form>
           {disasterEvacuationSites.length > 0 && (
             <div>
               <h2>避難所リスト</h2>
@@ -95,7 +106,7 @@ export default function Completed() {
                   <strong>{disasterEvacuationSites[0].facilityName}</strong>
                   <p>住所: {disasterEvacuationSites[0].address}</p>
                   <p>
-                    緯度: {disasterEvacuationSites[0].latitude}, 経度:{" "}
+                    緯度: {disasterEvacuationSites[0].latitude}, 経度:
                     {disasterEvacuationSites[0].longitude}
                   </p>
                   <strong>対応する災害タイプ</strong>
