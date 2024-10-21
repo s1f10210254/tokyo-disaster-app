@@ -1,50 +1,83 @@
 import { PrismaClient } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
 import { calculateDistance } from "./evacuationSites";
+import { OPENAI_API_KEY, OPENAI_BASE_PATH } from "@/utils/envKey";
+import axios from "axios";
 const prisma = new PrismaClient();
 
-// 災害キーワード
-const disasterKeywords = {
-  flood: ["洪水", "大雨", "川の氾濫"],
-  landslide: ["崖崩れ", "土砂崩れ", "地滑り"],
-  stormSurge: ["高潮", "台風の影響", "嵐"],
-  earthquake: ["地震", "余震", "震災"],
-  tsunami: ["津波", "海の波"],
-  largeFire: ["火事", "大火災"],
-  inlandFlooding: ["内水氾濫", "豪雨"],
-  volcanicPhenomenon: ["火山", "噴火"],
-  elevatorOrGroundFloor: ["エレベーター", "避難スペース", "1階"],
-  slope: ["スロープ", "段差"],
-  tactilePaving: ["点字ブロック", "視覚障害"],
-  accessibleToilet: ["車椅子対応トイレ", "バリアフリー"],
-};
+// 質問から災害タイプをLLMで抽出
+const extractDisasterTypeUsingLLM = async (question: string) => {
+  const maxRetries = 3;
+  let attempt = 0;
 
-// 質問から災害タイプを抽出
-const extractDisasterType = (question: string) => {
-  const disasterType = {
-    flood: false,
-    landslide: false,
-    stormSurge: false,
-    earthquake: false,
-    tsunami: false,
-    largeFire: false,
-    inlandFlooding: false,
-    volcanicPhenomenon: false,
-    elevatorOrGroundFloor: false,
-    slope: false,
-    tactilePaving: false,
-    accessibleToilet: false,
-  };
+  while (attempt < maxRetries) {
+    try {
+      const response = await axios.post(
+        `${OPENAI_BASE_PATH}/chat/completions`,
+        {
+          model: "gpt-3.5-turbo",
+          messages: [
+            {
+              role: "system",
+              content:
+                "You are a helpful assistant who identifies disaster types from user queries.",
+            },
+            {
+              role: "user",
+              content: `以下の質問に基づいて、関連する災害タイプをJSON形式で返してください。
+              対応する災害タイプのリストは以下の通りです：
+              - 洪水
+              - 崖崩れ
+              - 高潮
+              - 地震
+              - 津波
+              - 大火災
+              - 内水氾濫
+              - 火山現象
 
-  Object.entries(disasterKeywords).forEach(([key, keywords]) => {
-    keywords.forEach((keyword) => {
-      if (question.includes(keyword)) {
-        disasterType[key as keyof typeof disasterType] = true;
+              質問：${question}
+
+              出力形式:
+              {
+                "flood": true/false,
+                "landslide": true/false,
+                "stormSurge": true/false,
+                "earthquake": true/false,
+                "tsunami": true/false,
+                "largeFire": true/false,
+                "inlandFlooding": true/false,
+                "volcanicPhenomenon": true/false
+              }`,
+            },
+          ],
+          max_tokens: 500,
+          temperature: 0,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${OPENAI_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      // LLMの応答からJSON形式の災害タイプを抽出
+      const disasterType = JSON.parse(
+        response.data.choices[0].message.content.trim()
+      );
+      return disasterType;
+    } catch (error) {
+      console.error(`Error in LLM extraction attempt ${attempt + 1}:`, error);
+      attempt += 1;
+
+      // リトライが失敗した場合にエラーを再スロー
+      if (attempt >= maxRetries) {
+        throw new Error(
+          "Failed to extract disaster type using LLM after multiple attempts."
+        );
       }
-    });
-  });
-
-  return disasterType;
+    }
+  }
 };
 
 // フィルタ条件を構築
@@ -60,9 +93,6 @@ const buildFilterQuery = (disasterType: { [key: string]: boolean }) => {
 
   return filters;
 };
-
-// const OpenAIAPIKey = process.env.OPENAI_API_KEY;
-// const BasePath = process.env.OPENAI_BASE_PATH;
 
 export default async function handler(
   req: NextApiRequest,
@@ -82,7 +112,9 @@ export default async function handler(
 
   try {
     // 質問から災害タイプを抽出
-    const disasterType = extractDisasterType(question as string);
+    // const disasterType = extractDisasterType(question as string);
+    console.log("question: ", question);
+    const disasterType = await extractDisasterTypeUsingLLM(question as string);
     console.log("disasterType: ", disasterType);
 
     // フィルタ条件を構築

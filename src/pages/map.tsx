@@ -10,8 +10,6 @@ export default function Map() {
     null
   );
   const [route, setRoute] = useState<GeoJSON.FeatureCollection | null>(null);
-  const userMarker = useRef<mapboxgl.Marker | null>(null);
-  const destinationMarker = useRef<mapboxgl.Marker | null>(null);
 
   useEffect(() => {
     // ユーザーの現在地を取得
@@ -37,6 +35,8 @@ export default function Map() {
       });
       const language = new MapboxLanguage({ defaultLanguage: "ja" });
       map.current.addControl(language);
+
+      map.current.addControl(new mapboxgl.NavigationControl(), "top-right");
     }
   }, [userLocation]);
 
@@ -152,13 +152,26 @@ export default function Map() {
 
   return (
     <div>
-      <button onClick={getNearestEvacuationSite}>避難所を探す</button>
-      <div ref={mapContainer} style={{ width: "100%", height: "500px" }} />
-      <p>
-        {userLocation
-          ? `Your current location: ${userLocation[0]}, ${userLocation[1]}`
-          : "Fetching user location..."}
-      </p>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "5rem",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <button onClick={getNearestEvacuationSite}>避難所を探す</button>
+        <p>
+          {userLocation
+            ? `現在地: ${userLocation[0]}, ${userLocation[1]}`
+            : "Fetching user location..."}
+        </p>
+        <div
+          ref={mapContainer}
+          style={{ width: "100%", height: "60%", border: "2px solid black" }}
+        />
+      </div>
     </div>
   );
 }
