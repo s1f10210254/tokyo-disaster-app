@@ -21,6 +21,8 @@ export const useMap = (userLocation: address, userQuestion: string) => {
     EvacuationSite[]
   >([]);
 
+  const [evacuationManual, setEvacuationManual] = useState<string | null>(null);
+
   // マップを初期化
   useEffect(() => {
     if (mapContainerRef.current && userLocation) {
@@ -39,7 +41,6 @@ export const useMap = (userLocation: address, userQuestion: string) => {
       //　ナビゲーションコントロールを追加
       map.current.addControl(new mapboxgl.NavigationControl(), "top-right");
 
-      setLoading(false);
       return () => {
         map.current?.remove();
       };
@@ -129,6 +130,7 @@ export const useMap = (userLocation: address, userQuestion: string) => {
       fitMapToBounds([userLocation.longitude, userLocation.latitude], end);
     } else {
       console.error("Failed to fetch route:", data);
+
       alert("ルートの取得に失敗しました。");
     }
   };
@@ -151,16 +153,22 @@ export const useMap = (userLocation: address, userQuestion: string) => {
         const evacuationSites = await response.json();
         setDisasterEvacuationSites(evacuationSites);
         if (evacuationSites.length > 0) {
-          //   setDestination({
-          //     latitude: evacuationSites[0].latitude,
-          //     longitude: evacuationSites[0].longitude,
-          //   });
           const destination: [number, number] = [
             evacuationSites[0].longitude,
             evacuationSites[0].latitude,
           ];
           console.log("destination", destination);
+
           await getRoute(destination);
+          const ragResponse = await fetch("/api/rag/search", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ query: userQuestion }),
+          });
+          const ragResponseData = await ragResponse.json();
+          console.log("ragResponseData", ragResponseData);
+          setEvacuationManual(ragResponseData.answer);
+          setLoading(false);
         }
       } catch (error) {
         console.error("Error fetching evacuation sites", error);
@@ -173,5 +181,6 @@ export const useMap = (userLocation: address, userQuestion: string) => {
     mapContainerRef,
     getEvacuationSite,
     disasterEvacuationSites,
+    evacuationManual,
   };
 };

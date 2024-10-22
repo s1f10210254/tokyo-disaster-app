@@ -10,6 +10,7 @@ export default function Question() {
 
   const handleSubmit = async () => {
     setLoading(true);
+    console.log("query: ", query);
     const response = await fetch("/api/rag/search", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

@@ -11,6 +11,7 @@ export default async function handler(
     const { query } = req.body;
 
     try {
+      console.log("query: ", query);
       const searchResults = await searchInQdrant(query);
       // 検索結果からコンテキストを生成
       const context = searchResults
