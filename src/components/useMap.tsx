@@ -31,7 +31,7 @@ export const useMap = (userLocation: address, userQuestion: string) => {
         style: "mapbox://styles/mapbox/streets-v11",
         center: [userLocation.longitude, userLocation.latitude],
         zoom: 13,
-        preserveDrawingBuffer: true,
+        // preserveDrawingBuffer: true,
       });
 
       // MAPBOX APIを日本語に設定
@@ -39,7 +39,7 @@ export const useMap = (userLocation: address, userQuestion: string) => {
       map.current.addControl(language);
 
       //　ナビゲーションコントロールを追加
-      map.current.addControl(new mapboxgl.NavigationControl(), "top-right");
+      //   map.current.addControl(new mapboxgl.NavigationControl(), "top-right");
 
       return () => {
         map.current?.remove();

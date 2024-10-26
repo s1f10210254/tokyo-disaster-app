@@ -55,9 +55,7 @@ export default function Result() {
           height: "100vh",
         }}
       >
-        <div
-          style={{ width: "100%", height: "400px", border: "1px solid black" }}
-        >
+        <div style={{ width: "80%", height: "50%", border: "1px solid black" }}>
           <div
             ref={mapContainerRef}
             style={{ width: "100%", height: "100%" }}

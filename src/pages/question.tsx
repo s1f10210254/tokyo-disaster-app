@@ -24,7 +24,19 @@ export default function Question() {
   };
 
   const handleWeb = async () => {
-    await fetch("/api/rag/embedding");
+    // await fetch("/api/rag/embedding");
+    // await fetch("/api/rag/embedTest");
+
+    const response = await fetch("/api/rag/embedTest", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ url: "https://www.katada-lab.jp/doc/n240.pdf" }),
+    });
+
+    const data = await response.json();
+    console.log(data);
   };
 
   return (
@@ -66,7 +78,7 @@ export default function Question() {
           </ul>
         </div>
       )} */}
-      {/* <button onClick={handleWeb}>Embed URL</button> */}
+      <button onClick={handleWeb}>Embed URL</button>
     </div>
   );
 }
