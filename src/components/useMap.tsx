@@ -160,6 +160,8 @@ export const useMap = (userLocation: address, userQuestion: string) => {
           console.log("destination", destination);
 
           await getRoute(destination);
+
+          //避難行動マニュアルを取得
           const ragResponse = await fetch("/api/rag/search", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
