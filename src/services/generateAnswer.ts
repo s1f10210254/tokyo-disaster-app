@@ -14,7 +14,7 @@ export const generateAnswer = async (query: string, context: string) => {
           },
           {
             role: "user",
-            content: `質問: ${query}\n関連する情報: ${context}\n適切な回答を生成してください。`,
+            content: `質問: ${query}\n関連する情報: ${context}\n避難行動マニュアルを作成して。`,
           },
         ],
         max_tokens: 1000,

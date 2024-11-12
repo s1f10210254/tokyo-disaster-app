@@ -1,6 +1,7 @@
 import axios from "axios";
 import * as cheerio from "cheerio";
 
+// URLからクリーンなテキストを取得する関数
 export const fetchAndCleanPageText = async (url: string): Promise<string> => {
   try {
     // URLからHTMLを取得
@@ -10,18 +11,16 @@ export const fetchAndCleanPageText = async (url: string): Promise<string> => {
     const $ = cheerio.load(html);
 
     // 不要な要素を削除
-    $("script").remove(); // scriptタグを削除
-    $("iframe").remove(); // iframeタグを削除
-    $("style").remove(); // styleタグを削除
-    $("noscript").remove(); // noscriptタグを削除
-    $("meta").remove(); // metaタグを削除
-    $("link").remove(); // linkタグを削除
+    $("script, style, iframe, noscript, meta, link").remove();
 
-    // クリーンなテキストを取得
+    // ページのメインコンテンツを取得
     const cleanedText = $("body").text().replace(/\s+/g, " ").trim();
 
     return cleanedText;
   } catch (error) {
-    throw new Error(`Failed to fetch or clean page text:`);
+    console.error(
+      `Failed to fetch or clean page text from URL: ${url}. Error: ${error}`
+    );
+    throw new Error(`Failed to fetch or clean page text from URL: ${url}`);
   }
 };
